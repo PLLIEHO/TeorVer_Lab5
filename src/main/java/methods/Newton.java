@@ -1,0 +1,16 @@
+package methods;
+
+public class Newton {
+    public double count(double x0, FunctionStorage function, int key, double epsilon){
+        double fx = function.count(x0, key);
+        double f1x = function.countProizv(x0, key);
+        double x = x0 - (fx)/(f1x);
+        double abs = Math.abs(x-x0);
+        System.out.println("xk " + x + " F(xk): " + fx + " F'(xk): "+ f1x + " |xk+1 - xk|: " + abs);
+        if(abs<=epsilon){
+            return x;
+        } else {
+            return count(x, function, key, epsilon);
+        }
+    }
+}

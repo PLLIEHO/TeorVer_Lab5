@@ -1,7 +1,4 @@
-import methods.Cuts;
-import methods.FunctionStorage;
-import methods.Hordes;
-import methods.Iterations;
+import methods.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,26 +7,37 @@ import java.util.Scanner;
 
 public class IOService {
 
-    public void readFromConsole(int keyFunction, int keyMethod, double[] inter, double epsilon) {
+    public void readFromConsole(int keyFunction, int keyMethod, double close, double[] inter, double epsilon) {
         FunctionStorage function = new FunctionStorage();
         String ch = check(keyFunction, inter);
         if(!ch.equals("OK")){
             System.out.println(ch);
             return;
         }
-        switch (keyMethod){
-            case 2:
+        switch (keyMethod) {
+            case 1 -> {
+                Halfs halfs = new Halfs();
+                System.out.println("x: " + halfs.count(inter[0], inter[1], function, keyFunction, epsilon));
+            }
+            case 2 -> {
                 Hordes hordes = new Hordes();
                 System.out.println("x: " + hordes.count(inter, function, keyFunction, epsilon));
-                break;
-            case 4:
+            }
+            case 3 -> {
+                Newton newton = new Newton();
+                System.out.println("x: " + newton.count(close, function, keyFunction, epsilon));
+            }
+            case 4 -> {
                 Cuts cuts = new Cuts();
-                System.out.println("x: " + cuts.count(inter[1], inter[1]-0.1, function, keyFunction, epsilon));
-                break;
-            case 5:
+                System.out.println("x: " + cuts.count(close, close - 0.1, function, keyFunction, epsilon));
+            }
+            case 5 -> {
                 Iterations iterations = new Iterations();
                 System.out.println("x: " + iterations.prepare(inter, function, keyFunction, epsilon));
-                break;
+            }
+            default -> {
+                System.out.println("Ввод не распознан");
+            }
         }
     }
 

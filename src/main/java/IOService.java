@@ -1,61 +1,47 @@
-import methods.*;
+import methods_integral.Simpson;
+import methods_integral.Trapezoid;
+import methods_integral.rectangles.Center;
+import methods_integral.rectangles.Left;
+import methods_integral.rectangles.Right;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 public class IOService {
 
-    public void readFromConsole(int keyFunction, int keyMethod, double close, double[] inter, double epsilon) {
-        FunctionStorage function = new FunctionStorage();
-        String ch = "temp";
-        if(keyMethod!=6){ ch = check(keyFunction, inter, epsilon);};
+    public void readFromConsole(int keyFunction, int keyMethod, double[] limits, double epsilon, int signs) {
+        double scale = Math.pow(10, signs);
         switch (keyMethod) {
             case 1 -> {
-                if(!ch.equals("OK")){
-                    System.out.println(ch);
-                    return;
-                }
-                Halfs halfs = new Halfs();
-                System.out.println("x: " + halfs.count(inter[0], inter[1], function, keyFunction, epsilon));
+                Left func = new Left();
+                double[] value = func.prepare(keyFunction, limits, epsilon);
+                double precided = Math.ceil(value[0]*scale)/scale;
+                System.out.println("I= " + precided + " n= " + (int)(value[1]));
             }
             case 2 -> {
-                if(!ch.equals("OK")){
-                    System.out.println(ch);
-                    return;
-                }
-                Hordes hordes = new Hordes();
-                System.out.println("x: " + hordes.count(inter, function, keyFunction, epsilon));
+                Right func = new Right();
+                double[] value = func.prepare(keyFunction, limits, epsilon);
+                double precided = Math.ceil(value[0]*scale)/scale;
+                System.out.println("I= " + precided + " n= " + (int)(value[1]));
             }
             case 3 -> {
-                if(!ch.equals("OK")){
-                    System.out.println(ch);
-                    return;
-                }
-                Newton newton = new Newton();
-                System.out.println("x: " + newton.prepare(inter, function, keyFunction, epsilon));
+                Center func = new Center();
+                double[] value = func.prepare(keyFunction, limits, epsilon);
+                double precided = Math.ceil(value[0]*scale)/scale;
+                System.out.println("I= " + precided + " n= " + (int)(value[1]));
             }
             case 4 -> {
-                if(!ch.equals("OK")){
-                    System.out.println(ch);
-                    return;
-                }
-                Cuts cuts = new Cuts();
-                System.out.println("x: " + cuts.count(close, close - 0.1, function, keyFunction, epsilon));
+                Trapezoid func = new Trapezoid();
+                double[] value = func.prepare(keyFunction, limits, epsilon);
+                double precided = Math.ceil(value[0]*scale)/scale;
+                System.out.println("I= " + precided + " n= " + (int)(value[1]));
             }
             case 5 -> {
-                if(!ch.equals("OK")){
-                    System.out.println(ch);
-                    return;
-                }
-                Iterations iterations = new Iterations();
-                System.out.println("x: " + iterations.prepare(inter, function, keyFunction, epsilon));
-            }
-            case 6 -> {
-                IterationsSystem system = new IterationsSystem();
-                SystemStorage function1 = new SystemStorage();
-                System.out.println("x, y: " + Arrays.toString(system.prepare(inter, function1, keyFunction, epsilon)));
+                Simpson func = new Simpson();
+                double[] value = func.prepare(keyFunction, limits, epsilon);
+                double precided = Math.ceil(value[0]*scale)/scale;
+                System.out.println("I= " + precided + " n= " + (int)(value[1]));
             }
             default -> {
                 System.out.println("Ввод не распознан");
@@ -63,27 +49,4 @@ public class IOService {
         }
     }
 
-    private String check(int key, double[] inter, double epsilon){
-        FunctionStorage function = new FunctionStorage();
-        if(!(function.count(inter[0], key)*function.count(inter[1], key)<0)){
-            return "Корней на заданном участке нет.";
-        } else if(!monotonous(key, inter, function, epsilon)){
-            return "Корней на заданном участке может быть несколько, уточните.";
-        } else {
-            return "OK";
-        }
-    }
-
-    private boolean monotonous(int key, double[] inter, FunctionStorage function, double epsilon){
-        if(inter[0]*inter[1]<0){
-            return true;
-        }
-        double first = function.countProizv(inter[0], key);
-        for(double i = inter[0]+epsilon; i<inter[1]; i=i+epsilon){
-            if(!(function.countProizv(i, key)*first>0)){
-                return false;
-            }
-        }
-        return true;
-    }
 }
